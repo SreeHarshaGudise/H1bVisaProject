@@ -1,0 +1,10 @@
+bag1 = load '/user/hive/warehouse/project.db/harsha1' using PigStorage() as (s_no:int,case_status:chararray,employer_name:chararray,soc_name:chararray,job_title:chararray,full_time_position:chararray,prevailing_wage:int,year:chararray,worksite:chararray,longitude:double,latitude:double);
+bag2 = group bag1 by year;
+bag3 = foreach bag2 generate FLATTEN(group) as year,COUNT(bag1);
+bag4 = group bag1 by (case_status,year);
+bag5 = foreach bag4 generate group,COUNT(bag1) as total;
+bag5 = foreach bag5 generate FLATTEN(group),total;
+joined = join bag3 by year,bag5 by year;
+optimized = foreach joined generate $0,$1,$2,$4;
+percentage = foreach optimized generate $0,$2,ROUND_TO(((double)$3/(double)$1)*100,2) as percen;
+dump percentage;
