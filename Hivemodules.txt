@@ -1,0 +1,53 @@
+QUESTION2B:
+  
+
+// this view holds the data of list of locations who got certified in each year 
+
+
+command:
+create view query2b as select worksite,year,count(case_status) as total from harsha1 where case_status = "CERTIFIED" and year in ('2011','2012','2013','2014','2015','2016') group by worksite,year sort by year,total desc;
+
+
+// i have retrieved top 5 locations who got certified case_status from each year data
+
+command:
+select year,worksite,total,rank from (select year,worksite,rank() over (partition by year order by total desc) as rank,total from query2b ) ranked_table where ranked_table.rank<=5;
+
+
+
+
+QUESTION 3:
+
+select soc_name,job_title,count(job_title) as total from harsha1 where job_title = "DATA SCIENTIST" group by soc_name,job_title order by total desc limit 1;
+
+
+
+
+QUESTION 
+
+4:
+
+
+// View as Query4 which holds the data of count of particular employer name of each year
+
+
+Command:
+create view query4 as select employer_name,year,count(*) as total from harsha1 where year in ('2011','2012','2013','2014','2015','2016') group by year,employer_name sort by year,total;
+
+
+// And then I have used a UDF rank() function to rank the data according to count of each employer and retrieved top 5 values from each year.
+
+
+Command:
+select year,employer_name,total,rank from(select year,employer_name,rank() over (partition by year order by total desc) as rank,total from query4) ranked_table where ranked_table.rank <=5;
+
+
+
+
+
+
+
+QUESTION 7:
+select year,count(*) as total_applications from harsha1 group by year order by year;
+
+
